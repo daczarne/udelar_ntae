@@ -34,13 +34,13 @@ new_x <- factor(x, levels = c("malo", "bueno", "muy bueno", "excelente"))
 2. Usando la función `ordered` ordenar los niveles  del factor `new_x` en orden reverso (excelente, muy bueno, bueno, malo)
 
 ```{r}
-ordered(new_x, levels = c("excelente", "muy bueno", "bueno", "malo"))
+new_x2 <- ordered(new_x, levels = c("excelente", "muy bueno", "bueno", "malo"))
 ```
 
 3. Ahora usá la función `relevel` para hacer que el primer nivel de `new_x` sea excelente.
 
 ```{r}
-relevel(new_x,"excelente")
+new_x <- relevel(new_x,"excelente")
 ```
 
 4. Ahora transformá `x` en un factor con los niveles "excelente", "muy bueno",  "bueno", "malo" y  que las etiquetas sean "e", "mb", "b" y "m". Nombrar el nuevo objeto como `order_x`
