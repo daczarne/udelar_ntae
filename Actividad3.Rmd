@@ -51,7 +51,7 @@ y <- ifelse(y %% 2 == 1, 0, y)
 
 # Ejercicio 3
 
-```{r}
+```{r, error = TRUE}
 x <- c(1, 2, 3)
 y <- as.character(x)
 mi_media <- function(x, ...) {
