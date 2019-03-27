@@ -1,0 +1,34 @@
+---
+title: "Primer (lol) R Markdown"
+author: "Daniel Czarnievicz"
+date: "March 27, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(xtable)
+```
+
+# Incluir imagen
+
+Esta es una imagen que encontré en internet
+
+![](google_logo.png)
+
+La elegí porque me gustan los colorcitos. 
+
+# Chunk con código de R
+
+```{r, fig.height=5, fig.width=5,echo=TRUE}
+ggplot(mpg) +
+   geom_point(aes(x = hwy, y = cty))
+```
+
+# Incluir una tabla
+
+```{r, results='asis'}
+print(xtable(mpg[1:5, 1:5]), type = "latex")
+```
+
