@@ -209,5 +209,4 @@ ordenar_x <- function(x){
 ordenar_x(x)
 ordenar_x(rnorm(1000))
 ordenar_x(rnorm(1000))
-cat(":)")
 ```
