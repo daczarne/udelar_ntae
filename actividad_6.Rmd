@@ -54,6 +54,7 @@ ggplot(mpg) +
 Alpha, porque no modifica los datos.
 
 \newpage
+
 # Ejercicio 3
 
 ```{r}
