@@ -1,0 +1,69 @@
+---
+title: "Actividad 6"
+author: "Daniel Czarnievicz"
+date: "April 5, 2019"
+output: pdf_document
+header-includes:
+   - \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# Ejercicio 1
+
+```{r, fig.cap="Scatter plot hwy vs cty", fig.pos="H", fig.align="center"}
+ggplot(mpg) +
+   geom_point(aes(hwy, cty)) +
+   labs(x = "City drive efficiency (miles per gallon)", 
+        y = "Highway drive efficiency (miles per gallon)",
+        title = "Fuel efficiency comparison") +
+   theme(plot.title = element_text(h = 0.5))
+```
+
+\newpage
+
+# Ejercicio 2
+
+## 1) Using alpha to correct overplotting
+
+```{r}
+ggplot(mpg) +
+   geom_point(aes(hwy, cty), alpha = .1) +
+   labs(x = "City drive efficiency (miles per gallon)", 
+        y = "Highway drive efficiency (miles per gallon)",
+        title = "Fuel efficiency comparison") +
+   theme(plot.title = element_text(h = 0.5))
+```
+
+## 2) Using jitter to correct overplotting
+
+```{r}
+ggplot(mpg) +
+   geom_jitter(aes(hwy, cty)) +
+   labs(x = "City drive efficiency (miles per gallon)", 
+        y = "Highway drive efficiency (miles per gallon)",
+        title = "Fuel efficiency comparison") +
+   theme(plot.title = element_text(h = 0.5))
+```
+
+## 3)
+
+Alpha, porque no modifica los datos.
+
+\newpage
+# Ejercicio 3
+
+```{r}
+ggplot(mpg) +
+   geom_jitter(aes(hwy, cty, color = class)) +
+   labs(x = "City drive efficiency (miles per gallon)", 
+        y = "Highway drive efficiency (miles per gallon)",
+        title = "Fuel efficiency comparison") +
+   scale_color_brewer("Dark2") +
+   facet_wrap(~class) +
+   theme(plot.title = element_text(h = 0.5)) 
+```
+
