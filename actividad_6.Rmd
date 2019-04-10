@@ -68,3 +68,10 @@ ggplot(mpg) +
    theme(plot.title = element_text(h = 0.5)) 
 ```
 
+\fbox{\begin{minipage}{48em}
+3 en 1.
+\end{minipage}}
+
+\fbox{\begin{minipage}{48em}
+Muy buen trabajo! 10/10. Sin comentarios.
+\end{minipage}}
