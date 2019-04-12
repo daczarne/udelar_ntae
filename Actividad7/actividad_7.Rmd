@@ -1,0 +1,37 @@
+---
+title: "Actividad 7"
+author: "Daniel Czarnievicz"
+date: "April 5, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# Ejercicios 1 y 2
+
+```{r, message=FALSE}
+props <- read_csv("propina.csv")
+ggplot(props) +
+   geom_point(aes(total, propina, color = fuma)) +
+   geom_smooth(aes(total, propina), color = "black") +
+   labs(x = "Total gastado en dólares", 
+        y = "Propina en dólares", color = "Fumador") +
+   scale_color_brewer("Dark2") +
+   theme(legend.position = "bottom",
+         aspect.ratio = 1)
+```
+
+# Ejercicio 3 
+
+```{r}
+ggplot(props) +
+   geom_bar(aes(fct_infreq(dia), fill = dia)) +
+   coord_flip()
+```
+
+
+
+
