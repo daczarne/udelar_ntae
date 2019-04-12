@@ -65,5 +65,3 @@ mi_media(x)
 mean(x)
 mi_media(y)
 ```
-
-
