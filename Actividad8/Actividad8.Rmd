@@ -76,6 +76,11 @@ mpg %>%
    arrange(prom_ciudad)
 ```
 
+
+\fbox{\begin{minipage}{48em}
+O luego de calcular el promedio podías filtrar el máximo y el mínimo.
+\end{minipage}}
+
 ```{r}
 mpg %>%
    group_by(manufacturer) %>%
@@ -104,6 +109,10 @@ mpg %>%
              rango = max(cty) - min(cty))
 ```
 
+
+\fbox{\begin{minipage}{48em}
+Recordar que el error est{andar **de la media** es sigma dividido sqrt n}
+\end{minipage}}
 
 8. Mejora en el rendimiento: calcular el rendimiento promedio para cada marca, distinguiendo antes y después de 2004
 
@@ -136,3 +145,7 @@ mpg %>%
    select(manufacturer, model, year, hwy, litros_cada_100_kms)
 ```
 
+
+\fbox{\begin{minipage}{48em}
+10/10.
+\end{minipage}}
