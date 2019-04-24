@@ -159,10 +159,10 @@ ggplot2::mpg %>%
 
 ```{r}
 ggplot(mpg, aes(x = drv)) +
-   geom_bar(aes(y = (..count..)/sum(..count..), fill = factor(..x..)), stat="count",
-            show.legend = FALSE) +
-   geom_text(aes(label = scales::percent((..count..)/sum(..count..)),
-                 y = (..count..)/sum(..count..)-0.075), 
+   geom_bar(aes(y = ..prop.., fill = factor(..x..), group = "mira_que_lindos_grupos"),
+            stat="count", show.legend = FALSE) +
+   geom_text(aes(label = scales::percent(..prop..), y = ..prop..-0.075, 
+                 group = "mira_que_lindos_grupos"), 
              stat= "count", vjust = -.5, size = 10, color = "White") +
    scale_x_discrete(labels = c("4x4", "Forward drive", "Rear drive")) +
    scale_fill_brewer(palette = "Dark2", type = "qual") +
