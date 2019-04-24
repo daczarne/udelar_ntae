@@ -1,0 +1,158 @@
+---
+title: "Tarea individual 2"
+author: "Entregar el Viernes 26 de Abril"
+date: ""
+output:
+  pdf_document: default
+  fig_caption: true
+---
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy.opts = list(width.cutoff = 50), 
+                      tidy = FALSE, fig.pos = 'ht', out.extra = '', fig.show = "asis")
+library(tidyverse)
+library(gapminder)
+```
+
+## Entrega 
+
+Esta tarea tiene que estar disponible en su repositorio de GitHub con el resto de las actividades y tareas del curso el 26 de Abril. Asegurate que tanto Lucía como yo seamos colaboradoras de tu proyecto Tareas_STAT_NT creado hace dos semanas. Recordar seleccionar en en opciones de proyecto, codificación de código UTF-8. La tarea debe ser realizada en RMarkdown, la tarea es individual por lo que cada uno tiene que escribir su propia versión de la misma. El repositorio debe contener unicamente el archivo .Rmd con la solución de la tarea. Vamos a utilizar la librería `gapminder`, por lo que si no la usaste anteriormente tenés que instalarla y luego cargarla. Para obtener la descripción del paquete `library(help = "gapminder")` y para saber sobre la base `?gapminder`.
+
+Recordá que todas las Figuras deben ser autocontenidas, deben tener toda la información necesaria para que se entienda la información que se presenta. Todas las Figuras deben tener leyendas, títulos. El título (caption) debe contener el número de la Figura así como una breve explicación de la información en la misma. Adicionalmente en las Figuras los nombre de los ejes tienen que ser informativos.  En el YAML en Tarea_2.Rmd verás  `fig_caption: true` para que salgan los `caption` en el chunk de código debes incluir `fig.cap =` "Poner el que tipo de gráfico es y algún comentario interesante de lo que ves".
+
+##  Idea básica de regresión lineal  
+
+Una regresión lineal es una aproximación utilizada para modelar la relación entre dos variables que llamaremos `X` e `Y`. Donde Y es la variable que queremos explicar y X la variable explicativa (regresión simple).
+
+El análisis de regresión ajusta una curva a travéz  de los datos que representa la media de Y dado un valor especificado de X. Si ajustamos una regresión lineal a los datos consideramos "la curva media" como aquella que mejor ajusta a los datos.
+
+Algunas veces ajustamos curvas genéricas promediando puntos cercanos entre si con métodos de suavizado no necesariamente lineales. ¿Cómo incluimos una recta de regresión en nuestro gráfico?
+
+ajustamos una recta de regresión a los datos en Para agregar una linea de regresión o una curva tinenes que agregar una capa a tu gráfico `geom_smoth`. Probablemente dos de los argumentos más útiles de `geom_smoth` son:
+
+- `method = ...`
+    * ..."lm" para una linea recta. `lm` "Linear Model".
+    * ...otro para una curva genérica (llamada de suavizado; por defecto, es la parte `smooth` de `geom_smooth`).
+    * `se=...` controla si los intervalos de confianza son dibujados o no.
+
+Ejemplo:
+```{r, echo=TRUE}
+vc1 <- ggplot(gapminder, aes(year, lifeExp)) +
+    geom_point() 
+vc1 + geom_smooth(se = FALSE)
+```
+
+En este caso  `geom_smooth()` está usando `method = 'gam'`
+
+```{r, echo=TRUE}
+vc1 + geom_smooth(method = "lm")
+```
+
+## Ejercicio 1
+
+Hacer un gráfico de dispersión que tenga en el eje `y` `year` y en el eje `x` `lifeExp`, los puntos deben estar coloreados por la variable `continent`. Para este plot ajustá una recta de regresión para cada continente sin incluir las barras de error. Las etiquetas de los ejes deben ser claras y describir las variables involucradas. Incluir un `caption` en la Figura con algún comentario de interés que describa el gráfico. El resto de los comentarios del gráfico se realizan en el texto.
+
+```{r, fig.cap="Scatter plot of life expectancy at birth (in year) and years with lm regression lines, by continent"}
+gapminder %>% 
+   ggplot(aes(x = lifeExp, y = year, color = continent)) + 
+   geom_point() +
+   geom_smooth(method = "lm", se = FALSE) +
+   labs(x = "Life expectancy at birth (in years)", y = "Time (in years)", color = NULL) +
+   theme(axis.title = element_text(face = "bold"))
+```
+
+\newpage
+
+## Ejercicio 2 
+
+Omitir la capa de `geom_point()` del gráfico anterior. Las lineas aún aparecen aunque los puntos no. ¿Porqué sucede esto? `aes` and `data` in ggplot call.
+
+```{r, fig.cap="OLS regression of years and life expectancy at birth (in years), by continent"}
+gapminder %>% 
+   ggplot(aes(x = lifeExp, y = year, color = continent)) + 
+   geom_smooth(method = "lm", se = FALSE) +
+   labs(x = "Life expectancy at birth (in years)", y = "Time (in years)", color = NULL) +
+   theme(axis.title = element_text(face = "bold"))
+```
+
+\newpage
+
+## Ejercicio 3
+
+El siguiente es un gráfico de dispersión entre `lifeExp` y `gdpPercap`  coloreado por la variable `continent`. Usando como elemento estético color (`aes()`) nosotros podemos distinguir los distintos continentes usando diferentes colores de similar manera usando forma (`shape`).
+
+```{r, echo = FALSE}
+ggplot(gapminder, aes(log(gdpPercap), lifeExp, colour = continent)) +
+   geom_point(alpha = 0.2) +
+   labs(x = "GDP per captia (log, USD, inflation-adjusted)", 
+        y = "Life expectancy at birth (in years)",
+        color = NULL) +
+   facet_wrap(~continent) +
+   theme(axis.title = element_text(face = "bold"))
+```
+
+El gráfico anterior está sobrecargado, ¿de que forma modificarías el gráfico para que sea más clara la comparación para los distintos continentes y porqué? Usar `gdpPercap` en logaritmos, fijar `alpha` en 0.2 y `facet_wrap` por `continent`.
+
+Las etiquetas de los ejes deben ser claras y describir las variables involucradas. Comentá alguna característica interesante que describa lo que aprendes viendo el gráfico. `log(gdpPercap)` es buen predictor lineal de `lifeExp`.
+
+## Ejercicio 4
+
+Hacer un gráfico de lineas que tenga en el eje `x` `year` y en el eje `y` `gdpPercap` para cada continente en una misma ventana gráfica. En cada continente, el gráfico debe contener una linea para cada país a lo largo del tiempo (serie de tiempo de `gdpPercap`). Las etiquetas de los ejes deben ser claras y describir las variables involucradas. Incluir un `caption` en la Figura con algún comentario de interés que describa el gráfico.
+
+```{r}
+ggplot(gapminder) +
+   geom_line(aes(x = lubridate::make_date(year), 
+                 y = gdpPercap, color = continent, group = country)) +
+   facet_wrap(~continent) +
+   labs(x = "Time (in years)", y = "GDP Per capita (USD, inflation-adjusted)", color = NULL) +
+   theme(axis.title = element_text(face = "bold"))
+```
+
+## Ejercicio 5 
+
+Usando los datos `gapminder` seleccione una visualización que describa algún aspecto de los datos que no exploramos. Comente algo interesante que se puede aprender de su gráfico.
+
+```{r, fig.cap="Scatter plot of Population sizes and GDP per capita by continent. Larger countries are not, and have not always been, the richest ones."}
+gapminder %>% 
+   filter(year %in% c(1952, 1962, 1972, 1982, 1992, 2007)) %>% 
+ggplot(aes(x = log(pop), y = log(gdpPercap) , colour = continent)) +
+   geom_point(alpha = 0.2) +
+   labs(x = "Population size (in logs)",
+        y = "GDP per captia (log, USD, inflation-adjusted)",
+        color = NULL) +
+   facet_wrap(~year) +
+   theme(axis.title = element_text(face = "bold"))
+```
+
+\newpage
+
+## Ejercicio 6
+
+Con los datos `mpg` que se encuentran disponible en `ggplot2` hacer un gráfico de barras para la variables `drv` con las siguientes características:
+
+-  Las barras tienen que estar coloreadas por `drv`
+
+- Incluir usando `labs()` el nombre de los ejes y título informativo.
+
+- Usá la paleta de colores  `Dark2`, mirá la ayuda de `scale_colour_brewer()`.
+
+```{r}
+ggplot2::mpg %>% 
+   ggplot() +
+   geom_bar(aes(drv, fill = drv), show.legend = FALSE) +
+   scale_x_discrete(labels = c("4x4", "Forward drive", "Rear drive")) +
+   labs(x = "Wheel drive", y = "Count", title = "Number of vehicles per wheel drive type", 
+        fill = NULL)
+```
+
+
+# Ejercicio 7
+
+ Usando como base el gráfico anterior:
+ 
+ 
+- Incluir en el eje `y` porcentaje en vez de conteos
+
+-  Usando `scale_y_continuous()` cambiar la escala del eje `y` a porcentajes
+
+- Usando `geom_text()` incluir texto con porcentajes arriba de cada barra
+
