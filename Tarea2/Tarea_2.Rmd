@@ -140,19 +140,36 @@ ggplot2::mpg %>%
    ggplot() +
    geom_bar(aes(drv, fill = drv), show.legend = FALSE) +
    scale_x_discrete(labels = c("4x4", "Forward drive", "Rear drive")) +
+   scale_fill_brewer(palette = "Dark2", type = "qual") +
    labs(x = "Wheel drive", y = "Count", title = "Number of vehicles per wheel drive type", 
-        fill = NULL)
+        fill = NULL) +
+   theme(plot.title = element_text(hjust = 0.5),
+         axis.title = element_text(face = "bold"))
 ```
-
 
 # Ejercicio 7
 
  Usando como base el gráfico anterior:
  
- 
 - Incluir en el eje `y` porcentaje en vez de conteos
 
--  Usando `scale_y_continuous()` cambiar la escala del eje `y` a porcentajes
+- Usando `scale_y_continuous()` cambiar la escala del eje `y` a porcentajes
 
 - Usando `geom_text()` incluir texto con porcentajes arriba de cada barra
+
+```{r}
+ggplot(mpg, aes(x = drv)) +
+   geom_bar(aes(y = (..count..)/sum(..count..), fill = factor(..x..)), stat="count",
+            show.legend = FALSE) +
+   geom_text(aes(label = scales::percent((..count..)/sum(..count..)),
+                 y = (..count..)/sum(..count..)-0.075), 
+             stat= "count", vjust = -.5, size = 10, color = "White") +
+   scale_x_discrete(labels = c("4x4", "Forward drive", "Rear drive")) +
+   scale_fill_brewer(palette = "Dark2", type = "qual") +
+   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
+   labs(y = "Percentage", x="Wheel drive type") +
+   theme(axis.title = element_text(face = "bold"))
+```
+
+
 
