@@ -49,14 +49,14 @@ vc1 + geom_smooth(method = "lm")
 
 ## Ejercicio 1
 
-Hacer un gráfico de dispersión que tenga en el eje `y` `year` y en el eje `x` `lifeExp`, los puntos deben estar coloreados por la variable `continent`. Para este plot ajustá una recta de regresión para cada continente sin incluir las barras de error. Las etiquetas de los ejes deben ser claras y describir las variables involucradas. Incluir un `caption` en la Figura con algún comentario de interés que describa el gráfico. El resto de los comentarios del gráfico se realizan en el texto.
+Hacer un gráfico de dispersión que tenga en el eje `x` `year` y en el eje `y` `lifeExp`, los puntos deben estar coloreados por la variable `continent`. Para este plot ajustá una recta de regresión para cada continente sin incluir las barras de error. Las etiquetas de los ejes deben ser claras y describir las variables involucradas. Incluir un `caption` en la Figura con algún comentario de interés que describa el gráfico. El resto de los comentarios del gráfico se realizan en el texto.
 
-```{r, fig.cap="Scatter plot of life expectancy at birth (in year) and years with lm regression lines, by continent"}
+```{r, fig.cap="Scatter plot of life expectancy at birth (in year) and years with OLS regression lines, by continent"}
 gapminder %>% 
-   ggplot(aes(x = lifeExp, y = year, color = continent)) + 
+   ggplot(aes(y = lifeExp, x = year, color = continent)) + 
    geom_point() +
    geom_smooth(method = "lm", se = FALSE) +
-   labs(x = "Life expectancy at birth (in years)", y = "Time (in years)", color = NULL) +
+   labs(y = "Life expectancy at birth (in years)", x = "Time (in years)", color = NULL) +
    theme(axis.title = element_text(face = "bold"))
 ```
 
@@ -68,9 +68,9 @@ Omitir la capa de `geom_point()` del gráfico anterior. Las lineas aún aparecen
 
 ```{r, fig.cap="OLS regression of years and life expectancy at birth (in years), by continent"}
 gapminder %>% 
-   ggplot(aes(x = lifeExp, y = year, color = continent)) + 
+   ggplot(aes(y = lifeExp, x = year, color = continent)) + 
    geom_smooth(method = "lm", se = FALSE) +
-   labs(x = "Life expectancy at birth (in years)", y = "Time (in years)", color = NULL) +
+   labs(y = "Life expectancy at birth (in years)", x = "Time (in years)", color = NULL) +
    theme(axis.title = element_text(face = "bold"))
 ```
 
@@ -82,7 +82,7 @@ El siguiente es un gráfico de dispersión entre `lifeExp` y `gdpPercap`  colore
 
 ```{r, echo = FALSE}
 ggplot(gapminder, aes(log(gdpPercap), lifeExp, colour = continent)) +
-   geom_point(alpha = 0.2) +
+   geom_point(alpha = 0.2, show.legend = FALSE) +
    labs(x = "GDP per captia (log, USD, inflation-adjusted)", 
         y = "Life expectancy at birth (in years)",
         color = NULL) +
@@ -98,12 +98,13 @@ Las etiquetas de los ejes deben ser claras y describir las variables involucrada
 
 Hacer un gráfico de lineas que tenga en el eje `x` `year` y en el eje `y` `gdpPercap` para cada continente en una misma ventana gráfica. En cada continente, el gráfico debe contener una linea para cada país a lo largo del tiempo (serie de tiempo de `gdpPercap`). Las etiquetas de los ejes deben ser claras y describir las variables involucradas. Incluir un `caption` en la Figura con algún comentario de interés que describa el gráfico.
 
-```{r}
+```{r, fig.cap="Time series of GDP per capita per country by continent. "}
 ggplot(gapminder) +
-   geom_line(aes(x = lubridate::make_date(year), 
-                 y = gdpPercap, color = continent, group = country)) +
+   geom_line(aes(x = lubridate::make_date(year), y = gdpPercap/1000, 
+                 color = continent, group = country), show.legend = FALSE) +
    facet_wrap(~continent) +
-   labs(x = "Time (in years)", y = "GDP Per capita (USD, inflation-adjusted)", color = NULL) +
+   labs(x = "Time (in years)", y = "GDP Per capita (thousands USD, inflation-adjusted)", 
+        color = NULL) +
    theme(axis.title = element_text(face = "bold"))
 ```
 
@@ -115,7 +116,7 @@ Usando los datos `gapminder` seleccione una visualización que describa algún a
 gapminder %>% 
    filter(year %in% c(1952, 1962, 1972, 1982, 1992, 2007)) %>% 
 ggplot(aes(x = log(pop), y = log(gdpPercap) , colour = continent)) +
-   geom_point(alpha = 0.2) +
+   geom_point(alpha = 0.3) +
    labs(x = "Population size (in logs)",
         y = "GDP per captia (log, USD, inflation-adjusted)",
         color = NULL) +
@@ -159,10 +160,9 @@ ggplot2::mpg %>%
 
 ```{r}
 ggplot(mpg, aes(x = drv)) +
-   geom_bar(aes(y = ..prop.., fill = factor(..x..), group = "mira_que_lindos_grupos"),
-            stat="count", show.legend = FALSE) +
-   geom_text(aes(label = scales::percent(..prop..), y = ..prop..-0.075, 
-                 group = "mira_que_lindos_grupos"), 
+   geom_bar(aes(y = ..prop.., fill = factor(..x..), group = "mira_que_lindos_grupos"), stat="count", 
+            show.legend = FALSE) +
+   geom_text(aes(label = scales::percent(..prop..), y = ..prop..-0.075, group = "mira_que_lindos_grupos"),
              stat= "count", vjust = -.5, size = 10, color = "White") +
    scale_x_discrete(labels = c("4x4", "Forward drive", "Rear drive")) +
    scale_fill_brewer(palette = "Dark2", type = "qual") +
