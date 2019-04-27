@@ -74,6 +74,11 @@ gapminder %>%
    theme(axis.title = element_text(face = "bold"))
 ```
 
+
+\fbox{\begin{minipage}{48em}
+Bien, ggplot2 trabaja con layers.
+\end{minipage}}
+
 \newpage
 
 ## Ejercicio 3
@@ -94,6 +99,11 @@ El gráfico anterior está sobrecargado, ¿de que forma modificarías el gráfic
 
 Las etiquetas de los ejes deben ser claras y describir las variables involucradas. Comentá alguna característica interesante que describa lo que aprendes viendo el gráfico. `log(gdpPercap)` es buen predictor lineal de `lifeExp`.
 
+
+\fbox{\begin{minipage}{48em}
+Bien, el log de gdpPercap es un posible buen predictor.
+\end{minipage}}
+
 ## Ejercicio 4
 
 Hacer un gráfico de lineas que tenga en el eje `x` `year` y en el eje `y` `gdpPercap` para cada continente en una misma ventana gráfica. En cada continente, el gráfico debe contener una linea para cada país a lo largo del tiempo (serie de tiempo de `gdpPercap`). Las etiquetas de los ejes deben ser claras y describir las variables involucradas. Incluir un `caption` en la Figura con algún comentario de interés que describa el gráfico.
@@ -107,6 +117,11 @@ ggplot(gapminder) +
         color = NULL) +
    theme(axis.title = element_text(face = "bold"))
 ```
+
+
+\fbox{\begin{minipage}{48em}
+Bien.
+\end{minipage}}
 
 ## Ejercicio 5 
 
@@ -123,6 +138,11 @@ ggplot(aes(x = log(pop), y = log(gdpPercap) , colour = continent)) +
    facet_wrap(~year) +
    theme(axis.title = element_text(face = "bold"))
 ```
+
+
+\fbox{\begin{minipage}{48em}
+Bien.
+\end{minipage}}
 
 \newpage
 
@@ -172,4 +192,7 @@ ggplot(mpg, aes(x = drv)) +
 ```
 
 
+\fbox{\begin{minipage}{48em}
+Muy buen trabajo. 10/10. Sin comentarios adicionales.
+\end{minipage}}
 
