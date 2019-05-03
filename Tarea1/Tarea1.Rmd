@@ -3,6 +3,14 @@ title: "Tarea domiciliaria 1"
 author: "STAT NT"
 date: "28 de Marzo, 2019"
 output: pdf_document
+header-includes:
+   - \everymath{\displaystyle}
+   - \usepackage{xcolor}
+   - \usepackage[makeroom]{cancel}
+   - \usepackage{float}
+   - \DeclareMathOperator*{\plim}{plim}
+geometry: margin=1in
+fontsize: 12pt
 ---
 
 ```{r setup, include=FALSE}

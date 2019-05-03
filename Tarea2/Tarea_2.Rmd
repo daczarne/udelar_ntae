@@ -5,7 +5,16 @@ date: ""
 output:
   pdf_document: default
   fig_caption: true
+header-includes:
+   - \everymath{\displaystyle}
+   - \usepackage{xcolor}
+   - \usepackage[makeroom]{cancel}
+   - \usepackage{float}
+   - \DeclareMathOperator*{\plim}{plim}
+geometry: margin=1in
+fontsize: 12pt
 ---
+
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE, tidy.opts = list(width.cutoff = 50), 
                       tidy = FALSE, fig.pos = 'ht', out.extra = '', fig.show = "asis")
