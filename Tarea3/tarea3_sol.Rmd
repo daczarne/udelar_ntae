@@ -73,7 +73,7 @@ filter(dato_emision, !(dato_emision$key %in% c("I_E", "S_C", "TOTAL"))) %>%
 
 ## Parte 6
 
-```{r, fig.align='center', fig.cap="Evolución de la emisión total para las cinco principales fuentes", fig.pos="h"}
+```{r, fig.align='center', fig.cap="Evolución de la emisión total para las cinco principales fuentes", fig.pos="ht"}
 left_join(dato_emision, meta, by = c("key" = "Campo")) %>% 
    filter(key %in% c("Q_B", "T", "BI", "CE_SP", "I")) %>% 
    ggplot(aes(year, value, color = Etiqueta)) +
@@ -88,7 +88,7 @@ left_join(dato_emision, meta, by = c("key" = "Campo")) %>%
 
 ## Parte 7
 
-```{r, fig.align='center', fig.cap="Boxplot de emisiones de CO2 para las cinco principales fuentes", fig.pos="h"}
+```{r, fig.align='center', fig.cap="Boxplot de emisiones de CO2 para las cinco principales fuentes", fig.pos="ht"}
 left_join(dato_emision, meta, by = c("key" = "Campo")) %>% 
    filter(key %in% c("Q_B", "T", "BI", "CE_SP", "I")) %>% 
    ggplot() +
@@ -100,7 +100,7 @@ left_join(dato_emision, meta, by = c("key" = "Campo")) %>%
 
 ## Parte 8
 
-```{r, fig.align='center', fig.cap="Evolución de la emisión total de CO2 en Gg", fig.pos="h"}
+```{r, fig.align='center', fig.cap="Evolución de la emisión total de CO2 en Gg", fig.pos="ht"}
 filter(dato_emision, key == "TOTAL") %>% 
    ggplot(aes(x = year, y = value)) +
    geom_line() +
@@ -114,6 +114,111 @@ filter(dato_emision, key == "TOTAL") %>%
 
 # Ejercicio 2
 
+```{r}
+gastos <- readxl::read_xlsx("datos_gastos-por-actos-mdicos-2016.xlsx")
+```
 
+## ¿Cuál fue el porcentaje de actos médicos según departamento durante 2016?
 
+```{r, fig.align='center', fig.cap="Porcentaje de actos médicos según departamento de residencia del paciente", fig.pos="ht"}
+group_by(gastos, Departamento_residencia) %>%
+   summarise(n = n()) %>%
+   mutate(prop = n/sum(n, na.rm = TRUE)) %>%
+   ggplot(aes(y = fct_reorder(Departamento_residencia,n), x = prop)) +
+   geom_point() + 
+   labs(x = "Porcentaje de actos médicos", y = "Departamento de residencia") +
+   scale_x_continuous(labels = scales::percent_format(accuracy = 1)) +
+   ggthemes::theme_economist() +
+   theme(axis.title = element_text(face = "bold"),
+         aspect.ratio = 1)
+```
+
+## Para cada tipo de prestación, ¿cuál fue la cantidad de actos médicos en Montevideo durante 2016?
+
+```{r, fig.align='center', fig.pos="ht", fig.cap="Cantidad de actos médicos en Montevideo durante 2016 según tipo de prestación"}
+gastos %>%
+   filter(Departamento_residencia == "MONTEVIDEO") %>%
+   group_by(Prestacion) %>%
+   tally() %>%
+   mutate(Prestacion = str_to_title(Prestacion)) %>% 
+   ggplot() +
+   geom_bar(aes(x = fct_reorder(Prestacion, n, .desc = FALSE), y = n), stat = "identity") + 
+   coord_flip() +
+   labs(y = "\nTotal de actos médicos", x = "Tipo de prestación") +
+   ggthemes::theme_economist() +
+   theme(axis.text.y = element_text(hjust = 1, size = 5),
+         axis.title = element_text(face = "bold"))
+```
+
+## Para cada tipo de prestación, ¿cuál fue la proporción de actos médicos realizada por cada tipo de prestador durante 2016?
+
+```{r, fig.align='center', fig.pos="ht", fig.cap="Proporción de actos médicos durante 2016 según tipo de prestador"}
+gastos %>%
+   mutate(esASSE = if_else(Prestador_tipo == "ASSE", 1, 0)) %>%
+   group_by(Prestacion) %>%
+   summarise(cantASSE = sum(esASSE), cant=n()) %>%
+   mutate(propASSE = cantASSE / cant) %>%
+   dplyr::select(Prestacion, propASSE) %>%
+   right_join(gastos, by = "Prestacion") %>%
+   ggplot() +
+   geom_bar(aes(fct_reorder(Prestacion, propASSE), fill = Prestador_tipo), position = "fill") +
+   coord_flip() +
+   labs(x = "Tipo de presaticón\n", y = "\nProporción", fill = NULL) +
+   ggthemes::theme_economist() +
+   theme(axis.text.y = element_text(hjust = 1, size = 4),
+         legend.position = "bottom",
+         axis.title = element_text(face = "bold")) +
+   guides(fill = guide_legend(nrow = 2, byrow=TRUE))
+```
+
+## ¿Cuáles fueroon las 15 instituciones prestadoras que brindaron mayor proporción de actos médicos en Montevideo durante 2016?
+
+```{r, fig.align='center', fig.pos="ht", fig.cap="Quince principales prestadoras de servicios de salud en Montevideo durante 2016"}
+gastos %>%
+   dplyr::filter(Departamento_residencia == "MONTEVIDEO") %>%
+   group_by(Prestador) %>%
+   tally() %>%
+   mutate(prop_presta = n/sum(n), 
+          ranking = rank(prop_presta, ties.method = "max")) %>%
+   dplyr::arrange(desc(ranking)) %>%
+   head(n = 15L) %>%
+   droplevels() %>%
+   ggplot() +
+   geom_bar(aes(fct_reorder(Prestador, prop_presta, .desc = FALSE), prop_presta), stat = "identity") +
+   coord_flip() +
+   labs(x = "Prestador", y = "Proporción de prestaciones") +
+   ggthemes::theme_economist(horizontal = FALSE) +
+   theme(axis.text.y = element_text(hjust = 1, size = 6),
+         axis.title = element_text(face ="bold"))
+```
+
+## Según el tipo de prestador y el sexo del paciente, ¿cuál fue el importe de los actos médicos realizados durante 2016?
+
+```{r, fig.align='center', fig.pos="ht", fig.cap="Importe de las prestaciones realizadas durante 2016, según tipo de prestador y sexo del paciente"}
+gastos %>%
+   ggplot() +
+   geom_boxplot(aes(Prestador_tipo, log(Importe), fill=Prestador_tipo),
+                show.legend=FALSE, outlier.alpha=.1) +
+   facet_wrap(~Sexo) +
+   scale_x_discrete(labels = function(x) str_wrap(x, width=10)) +
+   labs(x="Tipo de prestador", y="Importe (en logaritmos)") +
+   ggthemes::theme_economist() +
+   theme(axis.title=element_text(face="bold"),
+         axis.text.x=element_text(vjust=0.5))
+```
+
+## Según el sexo del paciente y el tipo de prestador, ¿cuál es la asociación entre la edad del paciente y el monto a pagar por los actos médicos?
+
+```{r, fig.align='center', fig.pos="ht", fig.cap="Importe pagado por prestaciones médicas durante 2016 en función de la edad, según el tipo de prestador y el sexo. No parece existir asociación entre las variables."}
+gastos %>% 
+   mutate(log_importe = log(Importe)) %>%
+   ggplot(aes(x = Edad_anios, y = log_importe, color = Sexo)) + 
+   geom_point(alpha = 1/5) +
+   facet_wrap(~Prestador_tipo) +
+   labs(x = "\nEdad", y = "Importe (en logs)\n", color = NULL) +
+   ggthemes::theme_economist() +
+   theme(axis.title = element_text(face = "bold"),
+         legend.position = "bottom") +
+   guides(colour = guide_legend(override.aes = list(alpha = 1)))
+```
 
