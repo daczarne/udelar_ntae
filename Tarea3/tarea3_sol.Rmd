@@ -1,0 +1,119 @@
+---
+title: "Tarea 3"
+author: "Daniel Czarnievicz"
+date: "5/3/2019"
+output: pdf_document
+header-includes:
+   - \everymath{\displaystyle}
+   - \usepackage[makeroom]{cancel}
+   - \usepackage{float}
+   - \DeclareMathOperator*{\plim}{plim}
+geometry: margin=1in
+fontsize: 12pt
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, comment = "")
+library(tidyverse)
+library(magrittr)
+library(stringr)
+library(ggpmisc)
+```
+
+# Ejercicio 1
+
+## Parte 1
+
+```{r}
+dat <- readr::read_delim("emisiones-de-co2-por-sector.csv", delim = ",")
+names(dat) <- c("year", names(dat)[2:length(names(dat))])
+meta <- readr::read_delim("metadatos-emisiones-de-co2-por-sector.csv", delim = ";",
+                          locale = locale(encoding = "latin1"))
+names(meta) <- c(names(meta)[1:length(names(meta))-1], "desc")
+```
+
+## Parte 2
+
+```{r}
+dato_emision <- gather(data = dat, key = key, value = value, -year)
+```
+
+## Parte 3
+
+```{r}
+filter(dato_emision, !(dato_emision$key %in% c("I_E", "S_C", "TOTAL"))) %>% 
+   group_by(key) %>% 
+   summarise(total_por_key = sum(value)) %>% 
+   arrange(desc(total_por_key)) %$% 
+   cat(paste0("La fuente ", 
+              as.character(meta[(str_detect(.[1,]$key, meta$Campo) == T), "Etiqueta"]),
+              " tiene la emisión máxima con ", .[1,]$total_por_key), "Gg de CO2.")
+```
+
+## Parte 4
+
+```{r}
+filter(dato_emision, key == "Q_B") %$% 
+   cat(paste0("Se dió en el año ", as.numeric(.[which.max(.$value), "year"]), "."))
+```
+
+## Parte 5
+
+```{r}
+filter(dato_emision, !(dato_emision$key %in% c("I_E", "S_C", "TOTAL"))) %>% 
+   group_by(key) %>% 
+   summarise(valor_medio = mean(value)) %>% 
+   arrange(desc(valor_medio)) %>% 
+   left_join(., meta, by = c("key" = "Campo")) %>% 
+   select(Etiqueta, valor_medio) %>% 
+   rename(Fuente = Etiqueta, `Valor medio` = valor_medio) %$% 
+   knitr::kable(.[1:5,], digits = 2, 
+                caption = "Emisión media por fuente entre los años 1990 y 2017 (cinco fuentes principales) en Gg de CO2.")
+```
+
+## Parte 6
+
+```{r, fig.align='center', fig.cap="Evolución de la emisión total para las cinco principales fuentes", fig.pos="h"}
+left_join(dato_emision, meta, by = c("key" = "Campo")) %>% 
+   filter(key %in% c("Q_B", "T", "BI", "CE_SP", "I")) %>% 
+   ggplot(aes(year, value, color = Etiqueta)) +
+   geom_line() +
+   geom_point() +
+   labs(x = "Tiempo (en años desde 1990 a 2017)", y = "Emisiones (en Gg de CO2)", color = NULL) +
+   ggthemes::theme_economist() +
+   theme(axis.title = element_text(face = "bold"),
+         legend.position = "bottom") +
+   guides(color = guide_legend(nrow = 3, byrow=TRUE))
+```
+
+## Parte 7
+
+```{r, fig.align='center', fig.cap="Boxplot de emisiones de CO2 para las cinco principales fuentes", fig.pos="h"}
+left_join(dato_emision, meta, by = c("key" = "Campo")) %>% 
+   filter(key %in% c("Q_B", "T", "BI", "CE_SP", "I")) %>% 
+   ggplot() +
+   geom_boxplot(aes(fct_reorder(.f = key, .x = value, .fun = mean, .desc = TRUE), value, group = Etiqueta)) +
+   labs(x = "Fuentes con mayor emisión media entre 1990-2016", y = "Emisión de CO2 en Gg")
+```
+
+\newpage
+
+## Parte 8
+
+```{r, fig.align='center', fig.cap="Evolución de la emisión total de CO2 en Gg", fig.pos="h"}
+filter(dato_emision, key == "TOTAL") %>% 
+   ggplot(aes(x = year, y = value)) +
+   geom_line() +
+   geom_point() +
+   ggpmisc::stat_peaks(colour = "red") +
+   ggpmisc::stat_peaks(geom = "text", colour = "red", vjust = -.5) +
+   labs(x = "Año", y = "Emisión de CO2 en Gg")
+```
+
+\newpage
+
+# Ejercicio 2
+
+
+
+
