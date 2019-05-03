@@ -73,35 +73,62 @@ happy %>%
 4. Realiza una visualización  para ver como varía la  felicidad a lo largo de los años. Según tu visualización podrías concluir qué ¿nos volvemos más infelices a lo largo de los años?
 
 ```{r, warning=FALSE, message=FALSE, fig.pos="ht", fig.align='center', fig.cap="Felicidad según la edad del encuestado. No se encuentra evidencia de que las personas se vuelvan más infelices con la edad."}
-happy %>%
+happy %>% 
+   rename(happiness = happy) %>% 
+   dplyr::filter(!is.na(happiness), !is.na(age)) %>% 
+   droplevels() %>% 
    mutate(sex = str_to_sentence(sex),
-          happy = str_to_sentence(happy)) %>% 
-   filter(!is.na(happy)) %>% 
+          happiness = str_to_sentence(happiness)) %>% 
    ggplot() +
-   geom_density_ridges(aes(x = age, y = happy, fill = happy), alpha = 1/2 , show.legend = FALSE) +
-   labs(x = "Age", y = "Happiness level") +
-   theme_ridges()
+   geom_bar(aes(x = age, fill = happiness), position = "fill") +
+   coord_flip() +
+   labs(y = "Proporción", x = "Edad", fill = NULL) +
+   ggthemes::theme_economist() +
+   theme(legend.position = "bottom",
+         axis.title = element_text(face = "bold"))
 ```
-
-
 
 \newpage
 
 5. ¿Existen diferencias por sexo en cuanto a la evolución de la felicidad ?
 
-```{r, warning=FALSE, message=FALSE, fig.pos="ht", fig.align='center', fig.cap="Felicidad según la edad del encuestado. No se encuentra evidencia de que el sexo de la persona sea determinante de su nivel de felicidad."}
-happy %>%
+```{r, warning=FALSE, message=FALSE, fig.pos="ht", fig.align='center', fig.cap="Felicidad según la edad del encuestado y su sexo. La evidencia sugiere que los hombres se vuelvan más felices con los años, mientras que en las mujeres el nivel permanece relativamente incambiado."}
+happy %>% 
+   rename(happiness = happy) %>% 
+   dplyr::filter(!is.na(happiness), !is.na(age)) %>% 
+   droplevels() %>% 
    mutate(sex = str_to_sentence(sex),
-          happy = str_to_sentence(happy)) %>% 
-   filter(!is.na(happy)) %>% 
+          happiness = str_to_sentence(happiness)) %>% 
    ggplot() +
-   geom_density_ridges(aes(x = age, y = happy, fill = sex), alpha = 1/2 , show.legend = TRUE) +
-   labs(x = "Age", y = "Happiness level", fill = NULL) +
-   theme_ridges() +
-   theme(legend.position = "bottom")
+   geom_bar(aes(x = age, fill = happiness), position = "fill") +
+   coord_flip() +
+   labs(y = "Proporción", x = "Edad", fill = NULL) +
+   facet_wrap(~sex) +
+   ggthemes::theme_economist() +
+   theme(legend.position = "bottom",
+         axis.title = element_text(face = "bold"))
 ```
 
 \newpage
 
 6. Sin considerar los NA visualizar la proporción de muy felices por año e identificar si existe una tendencia lineal en la evolución. ¿ Existe diferencias según sexo para dicha evolución?
+
+```{r, warning=FALSE, message=FALSE, fig.pos="ht", fig.align='center', fig.cap="Evolución de la proporción de gente que aseguró estár muy feliz. La misma se ha mantenido relativamente constante en el tiempo."}
+happy %>% 
+   rename(happiness = happy) %>% 
+   dplyr::filter(!is.na(happiness)) %>% 
+   mutate(sex = str_to_sentence(sex),
+          happiness = str_to_sentence(happiness),
+          very_happy_people = if_else(happiness == "Very happy", 1, 0)) %>%
+   group_by(year) %>%
+   summarise(very_happy_mean = mean(very_happy_people)) %>%
+   ggplot() +
+   geom_line(aes(x = year, y = very_happy_mean)) +
+   ylim(0,1) +
+   labs(x = "Year", y = "Proportion of very happy people") +
+   ggthemes::theme_economist() +
+   theme(axis.title = element_text(face = "bold"))
+```
+
+
 
