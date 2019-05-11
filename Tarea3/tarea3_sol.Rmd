@@ -219,3 +219,10 @@ gastos %>%
    guides(colour = guide_legend(override.aes = list(alpha = 1)))
 ```
 
+
+
+\fbox{\begin{minipage}{48em}
+Muy buen trabajo! 10/10. Te había faltado subir la base de gastos médicos.
+\end{minipage}}
+
+
