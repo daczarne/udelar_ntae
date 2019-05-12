@@ -131,4 +131,12 @@ happy %>%
 ```
 
 
+\fbox{\begin{minipage}{48em}
+Ok todo, en esta última parte te faltó agrupar por sexo.
+\end{minipage}}
+
+
+\fbox{\begin{minipage}{48em}
+10/10. Sin comentarios adicionales
+\end{minipage}}
 
