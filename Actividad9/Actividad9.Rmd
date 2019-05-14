@@ -111,7 +111,7 @@ happy %>%
 
 \newpage
 
-6. Sin considerar los NA visualizar la proporción de muy felices por año e identificar si existe una tendencia lineal en la evolución. ¿ Existe diferencias según sexo para dicha evolución?
+6. Sin considerar los NA visualizar la proporción de muy felices por año e identificar si existe una tendencia lineal en la evolución. ¿Existe diferencias según sexo para dicha evolución?
 
 ```{r, warning=FALSE, message=FALSE, fig.pos="ht", fig.align='center', fig.cap="Evolución de la proporción de gente que aseguró estár muy feliz. La misma se ha mantenido relativamente constante en el tiempo."}
 happy %>% 
@@ -131,8 +131,26 @@ happy %>%
 ```
 
 
+```{r, warning=FALSE, message=FALSE, fig.pos="ht", fig.align='center', fig.cap="Evolución de la proporción de gente que aseguró estár muy feliz. La misma se ha mantenido relativamente constante en el tiempo, no evidenciandose diferencias significativas según el sexo del encuestado."}
+happy %>% 
+   rename(happiness = happy) %>% 
+   dplyr::filter(!is.na(happiness)) %>% 
+   mutate(sex = str_to_sentence(sex),
+          happiness = str_to_sentence(happiness),
+          very_happy_people = if_else(happiness == "Very happy", 1, 0)) %>%
+   group_by(year, sex) %>%
+   summarise(very_happy_mean = mean(very_happy_people)) %>%
+   ggplot() +
+   geom_line(aes(x = year, y = very_happy_mean, color = sex)) +
+   ylim(0,1) +
+   labs(x = "Year", y = "Proportion of very happy people", color = NULL) +
+   ggthemes::theme_economist() +
+   theme(axis.title = element_text(face = "bold"),
+         legend.position = "bottom")
+```
+
 \fbox{\begin{minipage}{48em}
-Ok todo, en esta última parte te faltó agrupar por sexo.
+Ok todo, en esta última parte te faltó agrupar por sexo. No it didn't :)
 \end{minipage}}
 
 
