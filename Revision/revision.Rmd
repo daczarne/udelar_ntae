@@ -11,6 +11,7 @@ fig_caption: true
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.pos = 'hbpt', out.extra = '', message = FALSE, 
                       warning = FALSE, comment = "")
+
 library(tidyverse)
 library(readxl)
 library(magrittr)
@@ -78,7 +79,7 @@ La tabla debe ser igual a la siguiente:
 \newpage
 
 ```{r, results='asis'}
-personas_reco %>% 
+tabla <- personas_reco %>% 
    mutate(parent.jefe = if_else(parent.jefe == 1, 1, 0)) %>% 
    filter(parent.jefe == 1) %>% 
    group_by(depto, sexo) %>% 
@@ -86,31 +87,33 @@ personas_reco %>%
    select(-parent.jefe) %>% 
    group_by(depto) %>% 
    mutate(prop = n / sum(n)) %>% 
-   rename(`Departamento` = depto, `Sexo` = sexo, `Conteo` = n, `Proporción` = prop) %>% 
-   xtable::xtable(caption = "Proporción de Jefes de hogar según departamento",
-                  digits = 2)
+   rename(`Departamento` = depto, `Sexo` = sexo, `Conteo` = n, `Proporción` = prop)
+print(xtable::xtable(x = tabla, caption = "Proporción de Jefes de hogar por departamento según sexo", digits = 2),
+      comment = FALSE)
 ```
 
 6. ¿Como podrías mostrar en una visualización la información de la tabla anterior para comparar la proporción de hombres y mujeres por departamento? Recordá poner nombre apropiados a los ejes y subtitulo (caption) que contenga el nombre de la figura y que información se muestra en la misma. Haz un comentario sobre lo que se observa.
 
-```{r}
+```{r, fig.cap="Gráfico de barras apiladas de la proporción de jefes de hogar según sexo y departamento. Se observa que para la mayoría de los departamentos en la muestra, hay una mayor proporción de jefes varones.", fig.pos="ht"}
 personas_reco %>% 
-   mutate(parent.jefe = if_else(parent.jefe == 1, 1, 0)) %>% 
    filter(parent.jefe == 1) %>% 
-   group_by(depto, sexo) %>% 
-   count(parent.jefe) %>% 
-   select(-parent.jefe) %>% 
-   group_by(depto) %>% 
-   mutate(prop = n / sum(n)) %>% 
    ggplot() +
-   geom_bar(aes(x = depto))
+   geom_bar(aes(fct_infreq(depto), y = ..count.. / sum(..count..), fill = as.factor(sexo)),
+            position = "fill") +
+   labs(y = "Proporción de jefes de hogar", x = "Departamento", fill = "Sexo") +
+   coord_flip()
 ```
+
+\newpage
 
 7. Usa la función `spread` de manera que en el objeto `tabla` generado en el punto anterior queden los departamentos como filas, el sexo como columnas (3 columnas: M, F, NS/NC) y en las celdas los valores de la variable `proporción`. ¿Obtenemos de esa manera un data set ordenado? ¿Por qué?
 
 ```{r}
-
+select(tabla, -Conteo) %>% 
+   spread(key = Sexo, value = `Proporción`)
 ```
+
+No es tidy data dado que no sigue los principios de la misma: una fila por oberservación, una columna por variable, una celda por valor. En este caso, la variable `sexo` está distribuida en tres columnas.
 
 8. Seleccioná las variables `depto`, `sexo` `nivel.educ` y `sit.conyugal`. Usando `mutate_if` para transformar las variables de tipo `integer` a tipo `factor`
 
@@ -128,7 +131,7 @@ select(personas_reco, depto, sexo, nivel.educ, sit.conyugal) %>%
 \end{figure}
 \newpage
 
-```{r fig.cap="Gráfico de barras de la situación conyugal de los jefes de hogares.", fig.pos="ht"}
+```{r fig.cap="Gráfico de barras de la proporción de personas según situación conyugal para los jefes de hogares. Se observar que la mayoría de ellos/as viven en hogares constituidos, ya sean casados/as o unidos/as.", fig.pos="ht"}
 personas_reco %>% 
    filter(parent.jefe == 1) %>% 
    mutate(sit.conyugal = as.factor(sit.conyugal),
@@ -139,8 +142,10 @@ personas_reco %>%
                                      "Divorciado" = "4",
                                      "Viudo" = "5",
                                      "NS/NC" = "9")) %>% 
-   ggplot() + 
-   geom_bar(aes(x = fct_infreq(sit.conyugal), y = ..count../sum(..count..))) +
+   ggplot(aes(x = fct_infreq(sit.conyugal))) + 
+   geom_bar(aes(y = ..count../sum(..count..))) +
+   geom_text(aes(label = scales::percent(..prop..), y = ..prop.., group = 1),
+             stat= "count", vjust = -.5) +
    labs(x = "Situación Conyugal", y = "Porcentaje") +
    scale_y_continuous(labels = scales::percent)
 ```
@@ -155,7 +160,7 @@ personas_reco %>%
 \caption{Gráfico a replicar}
 \end{figure}
 
-```{r, fig.cap="Gráfico de barras apiladas de la proporción de jefes de hogar según su situación conyugal"}
+```{r, fig.cap="Gráfico de barras apiladas de la proporción de jefes de hogar según su situación conyugal. En los hogares constituidos, casados o unidos, el jefe de hogar suele ser varón, mientras que la situación inversa se observa en los hogares monoparentales."}
 personas_reco %>%
    filter(parent.jefe == 1) %>% 
    mutate(sit.conyugal = as.factor(sit.conyugal),
@@ -165,7 +170,8 @@ personas_reco %>%
                                      "Casado" = "3",
                                      "Divorciado" = "4",
                                      "Viudo" = "5",
-                                     "NS/NC" = "9")) %>%
+                                     "NS/NC" = "9"),
+          sit.conyugal = fct_relevel(sit.conyugal, "Casado", "Unido", "NS/NC", "Divorciado", "Soltero", "Viudo")) %>%
    ggplot() +
    geom_bar(aes(sit.conyugal, y = ..count.. / sum(..count..), fill = sexo), position = "fill") +
    labs(x = "Situación Conyugal", y = "Proporción") +
