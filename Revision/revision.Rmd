@@ -1,13 +1,19 @@
 ---
 title: "Revisión"
-author: "NOMBRE: "
+author: "NOMBRE: Daniel Czarnievicz"
 date: "24/5/2019"
 output: pdf_document
+header-includes:
+   - \usepackage{float}
 fig_caption: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.pos = 'hbpt', out.extra = '', message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, fig.pos = 'hbpt', out.extra = '', message = FALSE, 
+                      warning = FALSE, comment = "")
+library(tidyverse)
+library(readxl)
+library(magrittr)
 ```
 
 ## Explicativo sobre la prueba
@@ -29,23 +35,39 @@ Los datos que vamos a utilizar en la prueba son los que trabajó Lucía en la cl
 La información es relevada en Olas en este caso vamos a usar datos de la tercer ola (2012) que contiene bases de personas, con información referente al niño y personas del hogar donde reside. 
 Los meta datos con información sobre las variables se encuentra en el archivo ola3_meta.csv.
 
-
 # Preguntas
 
 1. Usando la función `read_csv` del paquete `readr` cargá la base de datos `ola_3.csv` que se encuentra disponible en el EVA y a estos datos nombralos `personas`.
 
+```{r}
+personas <- readr::read_csv(file = "ola_3.csv")
+```
 
 2. Renombrá la variable `dpto_cod` como `depto`.
 
+```{r}
+personas <- rename(personas, depto = dpto_cod)
+```
 
 3. La variable `sexo` tiene tres valores,  recodificala para que el 1 sea `M` el 2 sea `F` y 9 sea `NS/NC` (no sabe). Guardá los nuevos datos en `personas_reco`.
 
+```{r}
+personas_reco <- mutate(personas, sexo = if_else(sexo == 1, "M", if_else(sexo == 2, "F", "NS/NC")))
+```
 
 4. Usando funciones de `dplyr` respondé ¿Cuál es la proporción de personas según sexo?
 
+```{r}
+personas_reco %>%
+   group_by(sexo) %>% 
+   tally() %>% 
+   mutate(prop = n / sum(n)) %>% 
+   select(-n) %>% 
+   knitr::kable(digits = 2, caption = "Proporción de personas en la base según sexo",
+                col.names = c("Sexo", "Proporción"))
+```
 
-5. Utilizando funciones de `dplyr`, reportá una tabla (con `xtable`) que tenga la información de la proporción de Jefes/as según sexo para cada departamento, el valor 1 de la variable parent.jefe corresponde al jefe/a de hogar.
-La tabla debe contener cuatro columnas (Departamento, Sexo, Conteo y Proporción). Guardá el objeto generado con nombre `tabla`.  
+5. Utilizando funciones de `dplyr`, reportá una tabla (con `xtable`) que tenga la información de la proporción de Jefes/as según sexo para cada departamento, el valor 1 de la variable parent.jefe corresponde al jefe/a de hogar. La tabla debe contener cuatro columnas (Departamento, Sexo, Conteo y Proporción). Guardá el objeto generado con nombre `tabla`.  
 
 La tabla debe ser igual a la siguiente:
 \begin{figure}[htbp]
@@ -55,15 +77,47 @@ La tabla debe ser igual a la siguiente:
 \end{figure}
 \newpage
 
+```{r, results='asis'}
+personas_reco %>% 
+   mutate(parent.jefe = if_else(parent.jefe == 1, 1, 0)) %>% 
+   filter(parent.jefe == 1) %>% 
+   group_by(depto, sexo) %>% 
+   count(parent.jefe) %>% 
+   select(-parent.jefe) %>% 
+   group_by(depto) %>% 
+   mutate(prop = n / sum(n)) %>% 
+   rename(`Departamento` = depto, `Sexo` = sexo, `Conteo` = n, `Proporción` = prop) %>% 
+   xtable::xtable(caption = "Proporción de Jefes de hogar según departamento",
+                  digits = 2)
+```
+
 6. ¿Como podrías mostrar en una visualización la información de la tabla anterior para comparar la proporción de hombres y mujeres por departamento? Recordá poner nombre apropiados a los ejes y subtitulo (caption) que contenga el nombre de la figura y que información se muestra en la misma. Haz un comentario sobre lo que se observa.
 
-
+```{r}
+personas_reco %>% 
+   mutate(parent.jefe = if_else(parent.jefe == 1, 1, 0)) %>% 
+   filter(parent.jefe == 1) %>% 
+   group_by(depto, sexo) %>% 
+   count(parent.jefe) %>% 
+   select(-parent.jefe) %>% 
+   group_by(depto) %>% 
+   mutate(prop = n / sum(n)) %>% 
+   ggplot() +
+   geom_bar(aes(x = depto))
+```
 
 7. Usa la función `spread` de manera que en el objeto `tabla` generado en el punto anterior queden los departamentos como filas, el sexo como columnas (3 columnas: M, F, NS/NC) y en las celdas los valores de la variable `proporción`. ¿Obtenemos de esa manera un data set ordenado? ¿Por qué?
 
+```{r}
+
+```
 
 8. Seleccioná las variables `depto`, `sexo` `nivel.educ` y `sit.conyugal`. Usando `mutate_if` para transformar las variables de tipo `integer` a tipo `factor`
 
+```{r}
+select(personas_reco, depto, sexo, nivel.educ, sit.conyugal) %>% 
+   mutate_if(.predicate = is.double, .funs = as.factor)
+```
 
 9. Replique el siguiente gráfico realizado usando solo información de jefe/a de hogar (valor 1 de `parent.jefe`) para la situación conyugal (`sit.conyugal`). Agregue un subtitulo adecuado al gráfico y comente algo interesante del mismo.
 
@@ -74,6 +128,25 @@ La tabla debe ser igual a la siguiente:
 \end{figure}
 \newpage
 
+```{r fig.cap="Gráfico de barras de la situación conyugal de los jefes de hogares.", fig.pos="ht"}
+personas_reco %>% 
+   filter(parent.jefe == 1) %>% 
+   mutate(sit.conyugal = as.factor(sit.conyugal),
+          sit.conyugal = fct_recode(sit.conyugal,
+                                     "Soltero" = "1",
+                                     "Unido" = "2",
+                                     "Casado" = "3",
+                                     "Divorciado" = "4",
+                                     "Viudo" = "5",
+                                     "NS/NC" = "9")) %>% 
+   ggplot() + 
+   geom_bar(aes(x = fct_infreq(sit.conyugal), y = ..count../sum(..count..))) +
+   labs(x = "Situación Conyugal", y = "Porcentaje") +
+   scale_y_continuous(labels = scales::percent)
+```
+
+\newpage
+
 10. Replique el siguiente gráfico realizado usando solo información de jefe/a de hogar (valor 1 de parent.jefe) para la situación conyugal (`sit.conyugal`) y sexo. Agregue un subtitulo adecuado al gráfico y comente algo interesante del mismo.
 
 \begin{figure}[htbp]
@@ -81,3 +154,21 @@ La tabla debe ser igual a la siguiente:
 \includegraphics[width=15cm, height =10cm]{pl2.png}
 \caption{Gráfico a replicar}
 \end{figure}
+
+```{r, fig.cap="Gráfico de barras apiladas de la proporción de jefes de hogar según su situación conyugal"}
+personas_reco %>%
+   filter(parent.jefe == 1) %>% 
+   mutate(sit.conyugal = as.factor(sit.conyugal),
+          sit.conyugal = fct_recode(sit.conyugal,
+                                     "Soltero" = "1",
+                                     "Unido" = "2",
+                                     "Casado" = "3",
+                                     "Divorciado" = "4",
+                                     "Viudo" = "5",
+                                     "NS/NC" = "9")) %>%
+   ggplot() +
+   geom_bar(aes(sit.conyugal, y = ..count.. / sum(..count..), fill = sexo), position = "fill") +
+   labs(x = "Situación Conyugal", y = "Proporción") +
+   theme(axis.text.x = element_text(angle = 90))
+```
+
