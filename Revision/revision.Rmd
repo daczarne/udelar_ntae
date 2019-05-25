@@ -96,9 +96,10 @@ print(xtable::xtable(x = tabla, caption = "Proporción de Jefes de hogar por dep
 
 ```{r, fig.cap="Gráfico de barras apiladas de la proporción de jefes de hogar según sexo y departamento. Se observa que para la mayoría de los departamentos en la muestra, hay una mayor proporción de jefes varones.", fig.pos="ht"}
 personas_reco %>% 
+   mutate(es_varon = if_else(sexo == "M", 1, 0)) %>% 
    filter(parent.jefe == 1) %>% 
    ggplot() +
-   geom_bar(aes(fct_infreq(depto), y = ..count.. / sum(..count..), fill = as.factor(sexo)),
+   geom_bar(aes(fct_reorder(depto, .x = es_varon, .fun = mean), y = ..count.. / sum(..count..), fill = as.factor(sexo)),
             position = "fill") +
    labs(y = "Proporción de jefes de hogar", x = "Departamento", fill = "Sexo") +
    coord_flip()
