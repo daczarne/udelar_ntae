@@ -1,0 +1,51 @@
+---
+title: "Actividad Shiny"
+author: "Daniel Czarnievicz"
+date: "June, 2"
+output: pdf_document
+---
+
+```{r setup, echo=FALSE, message=FALSE}
+library(shiny)
+library(tidyverse)
+```
+
+```{r, eval=FALSE, error=TRUE, echo=TRUE}
+ui <- fluidPage(
+  
+  titlePanel("Probability simulator"),
+
+  selectInput(inputId = "dist", label = "Distribution", choices = c("Normal", "Gamma")),
+  sliderInput(inputId = "cant", label = "Sample size", min = 1, max = 500, value = 30),
+  sliderInput(inputId = "media", label = "Sample mean", min = 0, max = 500, value = 0),
+  sliderInput(inputId = "desvio", label = "Sample standard deviation", min = 0, max = 500, value = 1),
+
+  plotOutput("hist")
+)
+server <- function(input, output){
+  output$hist <- renderPlot({
+    if(input$dist == "Normal") {
+      tibble(x = rnorm(n = input$cant, 
+                       mean = input$media, 
+                       sd = input$desvio)) %>% 
+        ggplot() + 
+        geom_histogram(aes(x, y = ..density..))
+      }
+    else {
+      tibble(x = rgamma(n = input$cant, 
+                        shape = (input$media / input$desvio)^2, 
+                        scale = (input$desvio^2 / input$media))) %>% 
+        ggplot() + 
+        geom_histogram(aes(x, y = ..density..))
+      }
+  })
+}
+shinyApp(ui, server)
+```
+
+
+
+
+
+
+
