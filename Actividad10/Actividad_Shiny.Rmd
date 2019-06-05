@@ -44,7 +44,9 @@ shinyApp(ui, server)
 ```
 
 
-
+\fbox{\begin{minipage}{48em}
+Bien!
+\end{minipage}}
 
 
 
