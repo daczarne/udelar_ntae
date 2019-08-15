@@ -1,7 +1,0 @@
-preguntas_url <- "https://github.com/johnblanco/predictor_electoral/blob/master/predictor_pol/preguntas.json"
-a <- readr::read_lines(preguntas_url)
-sink(file = "a.txt")
-a
-sink()
-preguntas <- jsonlite::read_json(preguntas_url, simplifyVector = TRUE)
-jsonlite::fromJSON(txt = preguntas_url)
