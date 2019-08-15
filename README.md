@@ -1,3 +1,3 @@
-# stat_nt
-NTAD
-Tareas stat_nt
+# Curso Stat_nt
+
+Tareas del curso con solución
