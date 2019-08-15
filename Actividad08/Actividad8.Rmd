@@ -1,0 +1,151 @@
+---
+title: "Actividad Individual 8"
+author: "Natalia da Silva"
+date: "12 de Abril"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = "")
+library(tidyverse)
+library(magrittr)
+```
+
+Esta actividad tiene que quedar disponible en su repositorio de GitHub con el resto de las actividades y tareas del curso. Asegurate que tanto lucía como yo seamos colaboradoras de tu proyecto Tareas_STAT_NT creado hace dos semanas.
+Recordar seleccionar en en opciones de proyecto, codificación de código UTF-8.
+Si trabajás en una misma computadora en el Lab todas tus actividades deben estar en un proyecto de RStudio en el disco T. Recordar que para que tengas la última version de tu repositorio debes hacer pull a tu repositorio para no generar inconsistencias y antes de terminar subir tus cambios con `commit` y `push`.
+
+# Ejercicio 1
+Cargar la librería `tidyverse` y con los datos `mpg` usar las funciones que vimos de `dplyr` para  transformar los datos de la siguiente forma. 
+
+
+1. Seleccionar el conjunto de autos del 2008 que tienen `hwy` mayor a 31.
+
+```{r}
+ggplot2::mpg %>%
+   filter(year == 2008, hwy > 31)
+```
+
+¿Cuantos autos son?
+
+```{r}
+ggplot2::mpg %>%
+   filter(year == 2008, hwy > 31) %$%
+   cat("Son", dim(.)[1], "autos")
+```
+
+2. Seleccionar el conjunto de autos que tienen `cty` igual a 9 ó `hwy` es mayor a 90. ¿Cuantos autos son? 
+
+```{r}
+mpg %>%
+   filter(cty == 9 | hwy > 90)
+```
+
+```{r}
+mpg %>%
+   filter(cty == 9 | hwy > 90) %$%
+   cat("Son", dim(.)[1], "autos")
+```
+
+3. Seleccioná la variable `displ` y `hwy`.
+
+```{r}
+select(mpg, displ, hwy)
+```
+
+4. Seleccioná desde la variable `trans` hasta la variable `hwy`.
+
+```{r}
+select(mpg, trans:hwy)
+```
+
+5. Produce un dataframe: marca, modelo, año, cantidad de cilindros y rendimiento en ciudad. Únicamente para los autos, toyota, camry. 
+
+```{r}
+mpg %>%
+   filter(manufacturer == "toyota", model == "camry") %>%
+   select(manufacturer, model, year, cyl, cty)
+```
+
+6. Calcula el rendimiento promedio en ciudad para cada marca (`manufacturer`). ¿Cuál es el mejor rendimiento en ciudad? y el peor ?  
+
+```{r}
+mpg %>%
+   group_by(manufacturer) %>%
+   summarise(prom_ciudad = mean(cty, na.rm = TRUE)) %>%
+   arrange(prom_ciudad)
+```
+
+
+\fbox{\begin{minipage}{48em}
+O luego de calcular el promedio podías filtrar el máximo y el mínimo.
+\end{minipage}}
+
+```{r}
+mpg %>%
+   group_by(manufacturer) %>%
+   summarise(prom_ciudad = mean(cty, na.rm = TRUE)) %>%
+   arrange(prom_ciudad) %>%
+   .[1,1] %$%
+   cat("El peor es", as.character(.))
+```
+
+```{r}
+mpg %>%
+   group_by(manufacturer) %>%
+   summarise(prom_ciudad = mean(cty, na.rm = TRUE)) %>%
+   arrange(desc(prom_ciudad)) %>%
+   .[1,1] %$%
+   cat("El mejor es", as.character(.))
+```
+
+7. Para cada marca: calcula el rendimiento promedio en ciudad, el error estandard de la media, y el rango
+
+```{r}
+mpg %>%
+   group_by(manufacturer) %>%
+   summarise(prom_ciudad = mean(cty, na.rm = TRUE),
+             st_err_med = var(cty, na.rm = TRUE) / n(),
+             rango = max(cty) - min(cty))
+```
+
+
+\fbox{\begin{minipage}{48em}
+Recordar que el error est{andar **de la media** es sigma dividido sqrt n}
+\end{minipage}}
+
+8. Mejora en el rendimiento: calcular el rendimiento promedio para cada marca, distinguiendo antes y después de 2004
+
+```{r}
+mpg %>%
+   mutate(antes = if_else(year < 2004, "Antes 2004", "Después 2004")) %>%
+   group_by(manufacturer, antes) %>%
+   summarise(media = mean(cty, na.rm = TRUE))
+```
+
+9. Calcular el rendimiento promedio en carretera (`hwy`), para 3 marcas seleccionadas aleatoriamente y ordena el resultado de menor a mayor
+
+```{r}
+mpg %>%
+   filter(manufacturer %in% base::sample(unique(mpg$manufacturer), size = 3)) %>%
+   group_by(manufacturer) %>%
+   summarise(prom_hwy = mean(hwy, na.rm = TRUE)) %>%
+   arrange(prom_hwy)
+```
+
+10. Crear una nueva variable que transforme `hwy` (millas por galón) en litros/100 km. Primero tenés que saber la conversión de galones a litros y de millas a kilómetros.
+
+`1 gallón = 3.78541 litros`
+
+`1 milla = 1.60934 km`
+
+```{r}
+mpg %>%
+   mutate(litros_cada_100_kms = 100 * (hwy / 3.74541 * 1.60934)^(-1)) %>%
+   select(manufacturer, model, year, hwy, litros_cada_100_kms)
+```
+
+
+\fbox{\begin{minipage}{48em}
+10/10.
+\end{minipage}}
