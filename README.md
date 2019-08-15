@@ -1,4 +1,4 @@
-# Stat_nt
+# stat_nt
 
 Tareas del curso de Nuevas Tecnologías  
 IESTA - FCEA - UDELAR  
