@@ -1,0 +1,80 @@
+---
+title: "Examen"
+author: "NOMBRE: "
+date: "17/5/2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.pos = 'hbpt', out.extra = '', message = FALSE, warning = FALSE)
+```
+
+## Explicativo
+
+Por favor completá tu nombre en el preámbulo del archivo donde dice `author: "NOMBRE: "`.
+El examen es individual y cualquier apartamiento de esto invalidará la prueba. Puede consultar el libro del curso durante el examen http://r4ds.had.co.nz pero no consultar otras fuentes de información.
+
+Los archivos y la información necesaria para desarrollar la prueba se encuentran en el D en la carpeta llamada STAT_NT_EXAM.
+
+Los datos que vamos a utilizar en este ejercicio son los mismos  que utilizaron en la tarea 2 en el segundo ejercicio.
+
+Los datos corresponden a los gastos realizados por actos médicos, **cada fila representa un acto médico**. Los datos y los metadatos se encuentran disponibles en el directorio D. Una vez terminada la prueba debe enviar el archivo Rmd y el pdf a natalia@iesta.edu.uy
+
+
+```{r, echo=TRUE}
+gastos <- read.csv("gastomed.csv", header = TRUE, dec = ",",encoding="latin1") 
+library(tidyverse)
+```
+
+## Ejercicio 1
+
+Usando las funciones de la librería `dplyr`  respondé:  
+
+a. ¿Cuál es la prestación con mayor cantidad de actos médicos en Montevideo?      
+
+
+b. Creá una variable con los totales de actos médicos por Departamento de residencia (`Departamento_residencia`). ¿Cuál es el departamento de residencia con menor cantidad de actos médicos?      
+
+
+c. ¿Qué cantidad de actos médicos son prestados por ASSE o IAMC?       
+
+
+
+\newpage
+
+## Ejercicio 2
+a. Replique el siguiente gráfico (Figura 1) usando `ggplot2`
+
+
+b. Replique el siguiente gráfico (Figura 2) usando `ggplot2`
+
+\newpage
+
+c. Replique el siguiente gráfico (Figura 3) usando `ggplot2`
+
+**Notar** que el orden de los niveles de `Prestacion` fueron ordenados haciendo:
+
+* una variable auxiliar que vale 1 si `Prestador_tipo` es ASSE y 0 en otro caso    
+* ordenamos los niveles de prestación según la media de la variable auxiliar
+* usamos la función `fct_reorder` 
+
+Comente algo interesante que surge de este gráfico. 
+
+
+
+\newpage
+## Ejercicio 3
+a. Usando `ggplot2` elabore una visualización que permita responder la pregunta de ¿Cuáles son las 10 instituciones prestadoras (`Prestador`) que brindaron mayor proporción de actos médicos en Montevideo (`Prestador_deparamento`)?
+
+Las etiquetas de los ejes deben ser claras y describir las variables involucradas. Incluir un `caption` (Título) en la figura y algún comentario de interés que describa el gráfico. Puede utilizar `fig.cap` en el chunck de código. 
+
+b. Usando `ggplot2` elabore un gráfico de cajas con el importe del acto médico (en logaritmos) según tipo de prestador y sexo. 
+
+Las etiquetas de los ejes deben ser claras y describir las variables involucradas. Incluir un `caption` (Título) en la figura y algún comentario de interés que describa el gráfico. Puede utilizar `fig.cap` en el chunck de código. 
+
+
+c. Se desea explorar la ascociación entre la edad del paciente y el importe de los actos médicos (en logaritmos). Realiza alguna visualización para estudiar dicha asociación, y ver como esta varía según el sexo del paciente y el tipo de prestador. 
+
+
+
+
