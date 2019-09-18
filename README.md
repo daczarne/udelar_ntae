@@ -1,5 +1,4 @@
 # stat_nt ![archived](https://img.shields.io/badge/lifecycle-archived-red.svg)
-
 Tareas del curso de Nuevas Tecnologías  
 IESTA - FCEA - UDELAR  
 Edición 2019  
