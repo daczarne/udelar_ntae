@@ -1,8 +1,8 @@
 # stat_nt  
 
 ![archived](https://img.shields.io/badge/lifecycle-archived-red.svg)  
-![languages](https://img.shields.io/github/languages/count/daczarne/stat_nt)   
-![top language](https://img.shields.io/github/languages/top/daczarne/stat_nt)   
+![languages](https://img.shields.io/github/languages/count/daczarne/udelar_ntae)   
+![top language](https://img.shields.io/github/languages/top/daczarne/udelar_ntae)   
 
 Tareas del curso de Nuevas Tecnologías  
 IESTA - FCEA - UDELAR  
