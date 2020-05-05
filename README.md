@@ -1,8 +1,8 @@
-# stat_nt  
+# Nuevas Tecnologías para el Análisis Estadístico de Datos
 
 ![archived](https://img.shields.io/badge/lifecycle-archived-red.svg)  
-![languages](https://img.shields.io/github/languages/count/daczarne/udelar_ntae)   
-![top language](https://img.shields.io/github/languages/top/daczarne/udelar_ntae)   
+![languages](https://img.shields.io/github/languages/count/daczarne/udelar_ntaed)   
+![top language](https://img.shields.io/github/languages/top/daczarne/udelar_ntaed)   
 
 Tareas del curso de Nuevas Tecnologías  
 IESTA - FCEA - UDELAR  
