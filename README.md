@@ -12,7 +12,6 @@ Tareas del curso de Nuevas Tecnologías
 IESTA - FCEA - UDELAR  
 Edición 2019  
 
-
 ## Actividades de clase
 
 [Actividad 1](https://github.com/daczarne/stat_nt/blob/master/Actividad01/Actividad1.pdf)  
@@ -26,18 +25,15 @@ Edición 2019
 [Actividad 9](https://github.com/daczarne/stat_nt/blob/master/Actividad09/Actividad9.pdf)  
 [Actividad 10](https://github.com/daczarne/stat_nt/blob/master/Actividad10/Actividad_Shiny.pdf)  
 
-
 ## Solución revisión 2019
 
 [Solución](https://github.com/daczarne/stat_nt/blob/master/Revision/revision.pdf)
-
 
 ## Tareas
 
 [Tarea 1](https://github.com/daczarne/stat_nt/blob/master/Tarea1/Tarea1.pdf)  
 [Tarea 2](https://github.com/daczarne/stat_nt/blob/master/Tarea2/Tarea_2.pdf)  
 [Tarea 3](https://github.com/daczarne/stat_nt/blob/master/Tarea3/tarea3_sol.pdf)  
-
 
 ## Trabajo final
 
