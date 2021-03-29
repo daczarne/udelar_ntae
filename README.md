@@ -2,11 +2,6 @@
 
 ![archived](https://img.shields.io/badge/lifecycle-archived-red.svg)
 
-![languages](https://img.shields.io/github/languages/count/daczarne/udelar_ntaed)
-![top language](https://img.shields.io/github/languages/top/daczarne/udelar_ntaed)
-
-![repo size](https://img.shields.io/github/repo-size/daczarne/udelar_ntaed)
-![code size](https://img.shields.io/github/languages/code-size/daczarne/udelar_ntaed)
 
 Tareas del curso de Nuevas Tecnologías  
 IESTA - FCEA - UDELAR  
